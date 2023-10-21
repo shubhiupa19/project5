@@ -9,7 +9,7 @@ function App() {
 
   return (
     <>
-     <h1>Recipe Database!</h1>
+     <h1>Meal Database!</h1>
      <RecipeSearch />
     </>
   )

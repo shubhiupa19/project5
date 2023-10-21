@@ -6,6 +6,11 @@ function RecipeSearch() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+ const [categories, setCategories] = useState([]);
+ const [selectedAreas, setSelectedAreas] = useState([]);
+ const [areas, setAreas] = useState([]);
+
   const apiKey = '1';
 
   const countIngredients = (meal) => {
@@ -19,6 +24,35 @@ function RecipeSearch() {
     return count;
   }
 
+  useEffect(() => {
+    const fetchAreas = async () => {
+        try {
+            const response = await fetch ('https://www.themealdb.com/api/json/v1/1/list.php?a=list');
+            const data = await response.json();
+            setAreas(data.meals);
+        } catch (err) {
+            console.error('Failed to fetch areas', err);
+        }
+
+    };
+    fetchAreas();
+
+  }, []);
+  useEffect(() => { 
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch ('https://www.themealdb.com/api/json/v1/1/list.php?c=list');
+            const data = await response.json();
+            setCategories(data.meals);
+        } catch (err) {
+            console.error('Failed to fetch categories', err);
+        }
+
+    };
+
+    fetchCategories();
+
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
         try {
@@ -61,9 +95,12 @@ function RecipeSearch() {
     return Math.max(...arr) - Math.min(...arr);
 }
 
-  const filteredMeals = meals?.filter(meal =>
-    meal.strMeal.toUpperCase().includes(searchTerm.toUpperCase())
-  );
+const filteredMeals = meals?.filter(meal =>
+    (selectedCategory === 'All' || meal.strCategory === selectedCategory) 
+    && (selectedAreas.length === 0 || selectedAreas.includes(meal.strArea)) 
+    && meal.strMeal.toUpperCase().includes(searchTerm.toUpperCase())
+);
+
 
   const ingredientCounts = filteredMeals?.map(meal => countIngredients(meal));
   return (
@@ -74,6 +111,17 @@ function RecipeSearch() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+      <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                <option value="All">All Categories</option>
+                {categories.map(cat => <option key={cat.strCategory} value={cat.strCategory}>{cat.strCategory}</option>)}
+        </select>
+        <select multiple value = {selectedAreas} onChange={(e) => {
+            const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
+            setSelectedAreas(selectedOptions);
+        }}>
+            {areas.map(area => <option key={area.strArea} value={area.strArea}>{area.strArea}</option>)}
+        </select>
+        <button onClick={() => setSelectedAreas([])}>Unselect All</button>
        <div>
         Total # of Meals: {meals?.length} <br/>
         Displaying: {filteredMeals?.length} meals <br/>
@@ -85,10 +133,14 @@ function RecipeSearch() {
       {filteredMeals && ( 
         <table>
             <thead>
+            <tr>
             <th>Image</th>
             <th>Name</th>
             <th>Category</th>
+            <th>Area</th>
             <th>No. of Ingredients</th>
+            
+            </tr>
             </thead>
         <tbody>
         {filteredMeals.map(meal => (
@@ -98,6 +150,7 @@ function RecipeSearch() {
                     </td>
                     <td>{meal.strMeal}</td>
                     <td>{meal.strCategory}</td>
+                    <td>{meal.strArea}</td>
                     <td>{countIngredients(meal)}</td>
                 </tr>
             ))}

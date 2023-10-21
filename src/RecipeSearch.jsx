@@ -105,23 +105,30 @@ const filteredMeals = meals?.filter(meal =>
   const ingredientCounts = filteredMeals?.map(meal => countIngredients(meal));
   return (
     <div>
+    <div className="search-controls">
     <input 
         type="text"
         placeholder="Search for a specific meal!"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+      <label htmlFor="categorySelect">Category:</label>
+      <select id="categorySelect" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
                 <option value="All">All Categories</option>
                 {categories.map(cat => <option key={cat.strCategory} value={cat.strCategory}>{cat.strCategory}</option>)}
         </select>
-        <select multiple value = {selectedAreas} onChange={(e) => {
+        <div className = "areas-wrapper">
+        <label htmlFor="areaSelect">Areas:</label>
+        <select id = "areaSelect" multiple value = {selectedAreas} onChange={(e) => {
             const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
             setSelectedAreas(selectedOptions);
         }}>
             {areas.map(area => <option key={area.strArea} value={area.strArea}>{area.strArea}</option>)}
         </select>
+        
         <button onClick={() => setSelectedAreas([])}>Unselect All</button>
+        </div>
+    </div>
        <div>
         Total # of Meals: {meals?.length} <br/>
         Displaying: {filteredMeals?.length} meals <br/>

@@ -13,6 +13,26 @@ function RecipeSearch() {
 
   const apiKey = '1';
 
+  const fetchByFirstLetter = async () => {
+    const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+    let allMealsByLetter = [];
+
+    for (let letter of alphabet) {
+        try {
+            const mealsResponse = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?f=${letter}`);
+            const mealsData = await mealsResponse.json();
+            
+            if (mealsData.meals) {
+                allMealsByLetter = [...allMealsByLetter, ...mealsData.meals];
+            }
+        } catch (error) {
+            console.error('Failed to fetch meals for letter:', letter, error);
+        }
+    }
+
+    return allMealsByLetter;
+};
+
   const countIngredients = (meal) => {
     let count = 0;
     for(let i = 1; i <= 30; i++) {
@@ -54,25 +74,19 @@ function RecipeSearch() {
 
   }, []);
   useEffect(() => {
-    const fetchData = async () => {
-        try {
-            const endpoint = `https://www.themealdb.com/api/json/v1/1/search.php?f=g`;
-            const response = await fetch(endpoint);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
-            setMeals(data.meals); 
-        }
-        catch (error) {
-            setError(error);
-        }
-        finally {
-            setLoading(false);
-        }
-    };
-    fetchData();
-  }, []);
+    const fetchAllMeals = async () => {
+      try {
+          const mealsByLetter = await fetchByFirstLetter();
+          setMeals(mealsByLetter);
+      } catch (error) {
+          setError(error);
+      } finally {
+          setLoading(false);
+      }
+  };
+
+  fetchAllMeals();
+}, []);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;

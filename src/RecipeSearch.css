@@ -5,7 +5,7 @@ body {
     font-family: 'Raleway', sans-serif;
     background-color: #f4f4f4;
     padding: 20px;
-    color: #333;
+    color: black;
 }
 
 /* Container styles */
@@ -22,15 +22,21 @@ input, select, button {
     border: none;
     border-radius: 5px;
     font-size: 16px;
+   
 }
 
 input[type="text"] {
     width: 300px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    
+    color: white;
+}
+input [type = "placeholder"] {
+    color: white !important;
 }
 
 select {
-    background-color: #f2f2f2; /* change this to your preferred color */
+    background-color: white; /* change this to your preferred color */
     border: 1px solid #d4d4d4;
     margin-left: 10px;
     margin-right: 10px;
@@ -48,7 +54,7 @@ select:hover {
 
 
 button {
-    background-color: #3498db;
+    background-color: #667558 !important;
     color: white;
     cursor: pointer;
     transition: background-color 0.3s;
@@ -72,7 +78,7 @@ th, td {
 }
 
 th {
-    background-color: #3498db;
+    background-color: #667558;
     color: white;
 }
 
@@ -111,4 +117,10 @@ div[role="alert"] {
 
 .areas-wrapper button {
     width: 200px;
+}
+
+label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: darkgreen;
 }
